@@ -14,8 +14,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "seed:admin": "tsx src/database/seed-admin.ts",
-    "seed:products": "tsx src/database/seed-products.ts",
-    "seed:prod": "tsx src/database/seed-prod.ts"
+    "seed:categories": "tsx src/database/seed-categories.ts",
+    "seed:products": "tsx src/database/seed-products.ts"
   },
   "dependencies": {
     "@prometheus-io/client": "^0.16.1",
