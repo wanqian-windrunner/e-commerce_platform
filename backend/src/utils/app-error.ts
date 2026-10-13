@@ -21,7 +21,7 @@ export class AppError extends Error {
 
   static unauthorized(
     message = "Authentication required",
-    code?: string
+    code?: string,
   ): AppError {
     return new AppError(message, 401, code);
   }
