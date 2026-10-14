@@ -34,7 +34,7 @@ export const findValidRefreshToken = async (rawToken: string) => {
         .where(and(
             eq(refreshTokens.tokenHash, tokenHash),
             eq(refreshTokens.isRevoked, false),
-            eq(refreshTokens.expiresAt, new Date())
+            gt(refreshTokens.expiresAt, new Date())
         ))
         .limit(1)
 
