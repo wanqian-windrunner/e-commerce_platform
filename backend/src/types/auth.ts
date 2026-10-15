@@ -44,6 +44,7 @@ export interface RegisterResult {
     role: UserRole;
   };
   accessToken: string;
+  refreshToken: string;
 }
 
 export interface LoginResult {

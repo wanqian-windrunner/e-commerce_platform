@@ -19,12 +19,16 @@ export const register = async (req: Request, res: Response, next: NextFunction):
     }
 
     try {
-        const result = await registerUser(validationResult.data)
+        const result = await registerUser(validationResult.data, req.get("user-agent"), req.ip)
+
+        res.cookie("refreshToken", result.refreshToken, refreshTokenCookieOptions)
+
+        const { refreshToken: _refreshToken, ...loginData } = result
 
         res.status(201).json({
             success: true,
             message: "User registered successfully",
-            data: result
+            data: loginData
         })
     } catch (error) {
         next(error)
