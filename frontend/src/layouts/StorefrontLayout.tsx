@@ -45,6 +45,9 @@ export const StorefrontLayout = () => {
           >
             Products
           </NavLink>
+          <NavLink to="/cart" className="text-sm hover:underline">
+            Cart
+          </NavLink>
           <div className="ml-auto flex items-center gap-3">
             {isLoading ? (
               <span className="text-sm text-muted-foreground">
@@ -68,7 +71,6 @@ export const StorefrontLayout = () => {
               </Link>
             )}
           </div>
-
         </div>
       </header>
       {logoutError && (

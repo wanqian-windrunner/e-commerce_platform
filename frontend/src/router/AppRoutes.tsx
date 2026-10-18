@@ -4,6 +4,7 @@ import { StorefrontLayout } from "@/layouts/StorefrontLayout";
 import { LoginPage } from "@/pages/LoginPage";
 import { RegisterPage } from "@/pages/RegisterPage";
 import { ProtectedRoute } from "@/router/ProtectedRoute";
+import { CartPage } from "@/pages/CartPage";
 
 const routes: RouteObject[] = [
   {
@@ -14,7 +15,9 @@ const routes: RouteObject[] = [
       { path: "products", element: <ProductsPage /> },
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
-      { element: <ProtectedRoute />, children: [] },
+      { element: <ProtectedRoute />, children: [
+        {path: "cart", element: <CartPage />}
+      ] },
     ],
   },
 ];
