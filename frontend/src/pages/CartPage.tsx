@@ -7,13 +7,14 @@ import {
   useDeleteCartItem,
   useUpdateCartItem,
 } from "@/hooks/useCart";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 export const CartPage = () => {
   const { data: cart, isPending, isError, error } = useCart();
   const updateMutation = useUpdateCartItem();
   const deleteMutation = useDeleteCartItem();
   const clearMutation = useClearCart();
+  const navigate = useNavigate();
 
   const isMutating =
     updateMutation.isPending ||
@@ -158,6 +159,13 @@ export const CartPage = () => {
       <div className="text-right">
         <p>Total items: {cart.totalItems}</p>
         <p className="text-lg font-semibold">Subtotal: {cart.subtotal}</p>
+        <Button
+          type="button"
+          disabled={isMutating}
+          onClick={() => navigate("/checkout")}
+        >
+          Checkout
+        </Button>
       </div>
     </div>
   );
