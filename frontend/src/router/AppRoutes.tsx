@@ -7,6 +7,7 @@ import { RegisterPage } from "@/pages/RegisterPage";
 import { ProtectedRoute } from "@/router/ProtectedRoute";
 import { CartPage } from "@/pages/CartPage";
 import { CheckoutPage } from "@/pages/CheckoutPage";
+import { OrderDetailPage } from "@/pages/OrderDetailPage";
 
 const routes: RouteObject[] = [
   {
@@ -21,6 +22,7 @@ const routes: RouteObject[] = [
       { element: <ProtectedRoute />, children: [
         {path: "cart", element: <CartPage />},
         { path: "checkout", element: <CheckoutPage /> },
+        { path: "orders/:id", element: <OrderDetailPage /> },
       ] },
     ],
   },

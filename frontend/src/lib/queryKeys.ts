@@ -10,4 +10,12 @@ export const queryKeys = {
   cart: {
     byUser: (userId: string) => ["cart", userId] as const,
   },
+  order: {
+    byUser: (userId: string, orderId: string) => [
+      "order",
+      userId,
+      "detail",
+      orderId,
+    ],
+  },
 };

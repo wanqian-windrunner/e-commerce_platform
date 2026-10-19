@@ -42,6 +42,9 @@ export const CheckoutPage = () => {
         <h1 className="text-2xl font-semibold"> Order placed</h1>
         <p>Order number: {createdOrder.orderNumber}</p>
         <p>Total: {createdOrder.totalAmount}</p>
+        <Link to={`/orders/${createdOrder.id}`} className="block underline">
+          View order details
+        </Link>
         <Link to="/products" className="underline">
           Continue shopping
         </Link>

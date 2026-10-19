@@ -1,7 +1,7 @@
-import { createOrder } from "@/api/order.api";
+import { createOrder, getOrderById } from "@/api/order.api";
 import { queryKeys } from "@/lib/queryKeys";
 import { useAuthStore } from "@/stores/authStore";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useCreateOrder = () => {
   const queryClient = useQueryClient();
@@ -17,3 +17,15 @@ export const useCreateOrder = () => {
     },
   });
 };
+
+export const useOrderById = (orderId:string) => {
+    const user = useAuthStore((state) => state.user)
+    const isLoading = useAuthStore((state) => state.isLoading)
+
+  return useQuery({
+    queryKey : queryKeys.order.byUser(user?.id ?? "", orderId),
+    queryFn: () => getOrderById(orderId),
+    select: (res) => res.data, 
+    enabled: !isLoading && Boolean(user) && Boolean(orderId),
+  })
+}
