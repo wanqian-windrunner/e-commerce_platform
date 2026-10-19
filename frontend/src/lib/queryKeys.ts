@@ -1,4 +1,5 @@
 import type { ProductListParams } from "@/types/products";
+import type { OrderListParams } from "@/types/orders";
 
 export const queryKeys = {
   products: {
@@ -11,11 +12,10 @@ export const queryKeys = {
     byUser: (userId: string) => ["cart", userId] as const,
   },
   order: {
-    byUser: (userId: string, orderId: string) => [
-      "order",
-      userId,
-      "detail",
-      orderId,
-    ],
+    byUser: (userId: string, orderId: string) =>
+      ["order", userId, "detail", orderId] as const,
+    lists: (userId: string) => ["order", userId, "list"] as const,
+    list: (userId: string, params?: OrderListParams) =>
+      ["order", userId, "list", params ?? {}] as const,
   },
 };

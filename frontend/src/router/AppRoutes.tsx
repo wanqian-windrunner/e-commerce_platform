@@ -8,6 +8,7 @@ import { ProtectedRoute } from "@/router/ProtectedRoute";
 import { CartPage } from "@/pages/CartPage";
 import { CheckoutPage } from "@/pages/CheckoutPage";
 import { OrderDetailPage } from "@/pages/OrderDetailPage";
+import { OrdersPage } from "@/pages/OrdersPage";
 
 const routes: RouteObject[] = [
   {
@@ -21,8 +22,9 @@ const routes: RouteObject[] = [
       { path: "register", element: <RegisterPage /> },
       { element: <ProtectedRoute />, children: [
         {path: "cart", element: <CartPage />},
-        { path: "checkout", element: <CheckoutPage /> },
-        { path: "orders/:id", element: <OrderDetailPage /> },
+        {path: "checkout", element: <CheckoutPage /> },
+        {path: "orders/:id", element: <OrderDetailPage /> },
+        {path: "orders", element: <OrdersPage />}
       ] },
     ],
   },

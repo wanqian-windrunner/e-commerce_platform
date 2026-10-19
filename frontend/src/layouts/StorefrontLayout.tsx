@@ -45,8 +45,31 @@ export const StorefrontLayout = () => {
           >
             Products
           </NavLink>
-          <NavLink to="/cart" className="text-sm hover:underline">
+          <NavLink
+            to="/cart"
+            className={({ isActive }) =>
+              cn(
+                "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                isActive
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )
+            }
+          >
             Cart
+          </NavLink>
+          <NavLink
+            to="/orders"
+            className={({ isActive }) =>
+              cn(
+                "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                isActive
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )
+            }
+          >
+            My orders
           </NavLink>
           <div className="ml-auto flex items-center gap-3">
             {isLoading ? (
