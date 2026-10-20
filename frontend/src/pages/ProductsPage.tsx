@@ -6,11 +6,22 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
+import type { ProductListParams } from "@/types/products";
+
+const sortOptions = {
+  newest: { sortBy: "createdAt", sortOrder: "desc" },
+  priceLow: { sortBy: "price", sortOrder: "asc" },
+  priceHigh: { sortBy: "price", sortOrder: "desc" },
+  nameAsc: { sortBy: "name", sortOrder: "asc" },
+} as const satisfies Record<string, Pick<ProductListParams, "sortBy" | "sortOrder">>;
+
+type SortOption = keyof typeof sortOptions;
 
 export const ProductsPage = () => {
   const [draftSearch, setDraftSearch] = useState("");
   const [search, setSearch] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [sortOption, setSortOption] = useState<SortOption>("newest");
   const [page, setPage] = useState(1);
   const { data: categories, isError: isCategoriesError, error: categoriesError } = useCategories();
   const { data, isPending, isError, error } = useProducts({
@@ -18,6 +29,7 @@ export const ProductsPage = () => {
     limit: 12,
     search: search || undefined,
     categoryId: categoryId || undefined,
+    ...sortOptions[sortOption],
   });
 
   const handleSearch = (event: SubmitEvent<HTMLFormElement>) => {
@@ -59,30 +71,52 @@ export const ProductsPage = () => {
         )}
       </form>
 
-      <div className="space-y-1">
-        <label htmlFor="category-filter" className="block text-sm font-medium">
-          Category
-        </label>
-        <select
-          id="category-filter"
-          className="h-9 w-full max-w-xs rounded-md border border-input bg-background px-3 text-sm"
-          value={categoryId}
-          disabled={!categories || isCategoriesError}
-          onChange={(event) => {
-            setCategoryId(event.target.value);
-            setPage(1);
-          }}
-        >
-          <option value="">All categories</option>
-          {categories?.map((category) => (
-            <option key={category.id} value={category.id}>{category.name}</option>
-          ))}
-        </select>
-        {isCategoriesError && (
-          <p role="alert" className="text-sm text-destructive">
-            Categories unavailable: {parseApiError(categoriesError)}
-          </p>
-        )}
+      <div className="flex flex-wrap gap-4">
+        <div className="space-y-1">
+          <label htmlFor="category-filter" className="block text-sm font-medium">
+            Category
+          </label>
+          <select
+            id="category-filter"
+            className="h-9 w-full max-w-xs rounded-md border border-input bg-background px-3 text-sm"
+            value={categoryId}
+            disabled={!categories || isCategoriesError}
+            onChange={(event) => {
+              setCategoryId(event.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="">All categories</option>
+            {categories?.map((category) => (
+              <option key={category.id} value={category.id}>{category.name}</option>
+            ))}
+          </select>
+          {isCategoriesError && (
+            <p role="alert" className="text-sm text-destructive">
+              Categories unavailable: {parseApiError(categoriesError)}
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-1">
+          <label htmlFor="product-sort" className="block text-sm font-medium">
+            Sort by
+          </label>
+          <select
+            id="product-sort"
+            className="h-9 w-full max-w-xs rounded-md border border-input bg-background px-3 text-sm"
+            value={sortOption}
+            onChange={(event) => {
+              setSortOption(event.target.value as SortOption);
+              setPage(1);
+            }}
+          >
+            <option value="newest">Newest</option>
+            <option value="priceLow">Price: low to high</option>
+            <option value="priceHigh">Price: high to low</option>
+            <option value="nameAsc">Name: A–Z</option>
+          </select>
+        </div>
       </div>
 
       {isPending ? (
