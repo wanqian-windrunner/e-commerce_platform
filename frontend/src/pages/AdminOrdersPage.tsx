@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminOrders } from "@/hooks/useAdminOrders";
 import { useState } from "react";
+import { Link } from "react-router";
 
 export const AdminOrdersPage = () => {
   const [page, setPage] = useState(1);
@@ -40,7 +41,11 @@ export const AdminOrdersPage = () => {
             <li key={order.id}>
               <Card>
                 <CardHeader>
-                  <CardTitle>Order {order.orderNumber}</CardTitle>
+                  <CardTitle>
+                    <Link to={`/admin/orders/${order.id}`} className="hover:underline">
+                      Order {order.orderNumber}
+                    </Link>
+                  </CardTitle>
                   <p className="text-sm text-muted-foreground">
                     Placed {new Date(order.createdAt).toLocaleString()}
                   </p>
