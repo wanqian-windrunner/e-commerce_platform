@@ -22,6 +22,10 @@ export const ProductsPage = () => {
   const [search, setSearch] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [sortOption, setSortOption] = useState<SortOption>("newest");
+  const [draftMinPrice, setDraftMinPrice] = useState("");
+  const [draftMaxPrice, setDraftMaxPrice] = useState("");
+  const [priceFilter, setPriceFilter] = useState<Pick<ProductListParams, "minPrice" | "maxPrice">>({});
+  const [priceError, setPriceError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const { data: categories, isError: isCategoriesError, error: categoriesError } = useCategories();
   const { data, isPending, isError, error } = useProducts({
@@ -30,6 +34,7 @@ export const ProductsPage = () => {
     search: search || undefined,
     categoryId: categoryId || undefined,
     ...sortOptions[sortOption],
+    ...priceFilter,
   });
 
   const handleSearch = (event: SubmitEvent<HTMLFormElement>) => {
@@ -41,6 +46,42 @@ export const ProductsPage = () => {
   const clearSearch = () => {
     setDraftSearch("");
     setSearch("");
+    setPage(1);
+  };
+
+  const applyPriceFilter = (event: SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const minInput = draftMinPrice.trim();
+    const maxInput = draftMaxPrice.trim();
+    const minPrice = minInput === "" ? undefined : Number(minInput);
+    const maxPrice = maxInput === "" ? undefined : Number(maxInput);
+    const minField = event.currentTarget.elements.namedItem("min-price") as HTMLInputElement;
+    const maxField = event.currentTarget.elements.namedItem("max-price") as HTMLInputElement;
+
+    if (
+      minField.validity.badInput ||
+      maxField.validity.badInput ||
+      (minPrice !== undefined && (!Number.isFinite(minPrice) || minPrice < 0)) ||
+      (maxPrice !== undefined && (!Number.isFinite(maxPrice) || maxPrice < 0))
+    ) {
+      setPriceError("Enter valid non-negative prices.");
+      return;
+    }
+    if (minPrice !== undefined && maxPrice !== undefined && minPrice > maxPrice) {
+      setPriceError("Minimum price cannot be greater than maximum price.");
+      return;
+    }
+
+    setPriceError(null);
+    setPriceFilter({ minPrice, maxPrice });
+    setPage(1);
+  };
+
+  const clearPriceFilter = () => {
+    setDraftMinPrice("");
+    setDraftMaxPrice("");
+    setPriceFilter({});
+    setPriceError(null);
     setPage(1);
   };
 
@@ -118,6 +159,52 @@ export const ProductsPage = () => {
           </select>
         </div>
       </div>
+
+      <form onSubmit={applyPriceFilter} noValidate className="space-y-2">
+        <div className="flex flex-wrap items-end gap-3">
+          <div className="space-y-1">
+            <label htmlFor="min-price" className="block text-sm font-medium">
+              Minimum price
+            </label>
+            <Input
+              id="min-price"
+              type="number"
+              min="0"
+              step="0.01"
+              className="w-32"
+              value={draftMinPrice}
+              onChange={(event) => setDraftMinPrice(event.target.value)}
+              aria-invalid={Boolean(priceError)}
+              aria-describedby={priceError ? "price-error" : undefined}
+            />
+          </div>
+          <div className="space-y-1">
+            <label htmlFor="max-price" className="block text-sm font-medium">
+              Maximum price
+            </label>
+            <Input
+              id="max-price"
+              type="number"
+              min="0"
+              step="0.01"
+              className="w-32"
+              value={draftMaxPrice}
+              onChange={(event) => setDraftMaxPrice(event.target.value)}
+              aria-invalid={Boolean(priceError)}
+              aria-describedby={priceError ? "price-error" : undefined}
+            />
+          </div>
+          <Button type="submit">Apply price</Button>
+          <Button type="button" variant="outline" onClick={clearPriceFilter}>
+            Clear price
+          </Button>
+        </div>
+        {priceError && (
+          <p id="price-error" role="alert" className="text-sm text-destructive">
+            {priceError}
+          </p>
+        )}
+      </form>
 
       {isPending ? (
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
