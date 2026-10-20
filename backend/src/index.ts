@@ -12,6 +12,7 @@ import orderRouter from "./routes/order.routes.js"
 import adminOrderRouter from "./routes/admin-order.routes.js"
 import categoryRouter from "./routes/category.routes.js"
 import adminUserRouter from "./routes/admin-user.routes.js"
+import adminProductRouter from "./routes/admin-product.routes.js"
 import { AppError } from "./utils/app-error.js"
 import { errorHandler } from "./middleware/error.middleware.js"
 import { connectDB, pool } from "./database/db.js"
@@ -78,6 +79,7 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRouter)
 app.use("/api/users", userRouter)
 app.use("/api/products", productRouter)
+app.use("/api/admin/products", adminProductRouter)
 app.use("/api/cart", cartRouter)
 app.use("/api/orders", orderRouter)
 app.use("/api/admin/orders", adminOrderRouter)

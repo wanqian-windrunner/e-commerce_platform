@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { createProductSchema, listProductsQuerySchema, productIdParamSchema, productSlugParamSchema, updateProductSchema } from "../validations/product.validation.js";
-import { createProduct, deactivateProduct, getProductById, getProductBySlug, listProducts, updateProduct } from "../services/product.service.js";
+import { createProduct, deactivateProduct, getActiveProductById, getProductById, getProductBySlug, listProducts, updateProduct } from "../services/product.service.js";
 
 
 export const create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -40,6 +40,30 @@ export const getById = async (req: Request, res: Response, next: NextFunction): 
             return
         }
 
+        const product = await getActiveProductById(validationResult.data.id)
+
+        res.status(200).json({
+            success: true,
+            data: { product }
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getAdminById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const validationResult = productIdParamSchema.safeParse(req.params)
+
+        if (!validationResult.success) {
+            res.status(400).json({
+                success: false,
+                message: "Invalid product ID",
+                errors: validationResult.error.issues
+            })
+            return
+        }
+
         const product = await getProductById(validationResult.data.id)
 
         res.status(200).json({
@@ -66,6 +90,30 @@ export const getBySlug = async (req: Request, res: Response, next: NextFunction)
 }
 
 export const list = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const validationResult = listProductsQuerySchema.safeParse(req.query)
+
+        if (!validationResult.success) {
+            res.status(400).json({
+                success: false,
+                message: "Invalid query parameters",
+                errors: validationResult.error.issues
+            })
+            return
+        }
+
+        const result = await listProducts({ ...validationResult.data, includeInactive: false })
+
+        res.status(200).json({
+            success: true,
+            data: result
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const listAdmin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const validationResult = listProductsQuerySchema.safeParse(req.query)
 

@@ -149,6 +149,21 @@ export const getProductById = async (productId: string) => {
     return product
 }
 
+export const getActiveProductById = async (productId: string) => {
+    const [product] = await db
+        .select(productSelectFields)
+        .from(products)
+        .leftJoin(categories, eq(products.categoryId, categories.id))
+        .where(and(eq(products.id, productId), eq(products.isActive, true)))
+        .limit(1)
+
+    if (!product) {
+        throw AppError.notFound("Product not found", "PRODUCT_NOT_FOUND")
+    }
+
+    return product
+}
+
 export const getProductBySlug = async (slug: string) => {
     const [product] = await db
         .select(productSelectFields)
