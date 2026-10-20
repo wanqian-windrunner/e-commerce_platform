@@ -32,6 +32,20 @@ export const getCategoryById = async (categoryId: string) => {
     return category
 }
 
+export const getActiveCategoryById = async (categoryId: string) => {
+    const [category] = await db
+        .select()
+        .from(categories)
+        .where(and(eq(categories.id, categoryId), eq(categories.isActive, true)))
+        .limit(1)
+
+    if (!category) {
+        throw AppError.notFound("Category not found")
+    }
+
+    return category
+}
+
 export const getCategoryBySlug = async (slug: string) => {
     const [category] = await db
         .select()
