@@ -187,7 +187,7 @@ export const deactivate = async (req: Request, res: Response, next: NextFunction
 
         const product = await deactivateProduct(validationResult.data.id)
 
-        res.status(400).json({
+        res.status(200).json({
             success: true,
             message: "Product deactivated successfully",
             data: { product }

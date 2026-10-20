@@ -60,6 +60,7 @@ export const createProductSchema = z.object({
   ...baseProductShape,
   stock: productStockSchema.default(0),
   isActive: z.boolean().default(true),
+  categoryId: z.uuid("Invalid category ID"),
 });
 
 export const updateProductSchema = z
