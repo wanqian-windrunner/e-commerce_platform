@@ -18,4 +18,7 @@ export const queryKeys = {
     list: (userId: string, params?: OrderListParams) =>
       ["order", userId, "list", params ?? {}] as const,
   },
+  categories: {
+    all: ["categories"] as const,
+  },
 };

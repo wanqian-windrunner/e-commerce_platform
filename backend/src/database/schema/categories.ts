@@ -27,7 +27,6 @@ export const categories = pgTable(
       .$onUpdate(() => new Date()),
   },
   (table) => [
-    // 自引用外键：必须写在第三参数里，列定义阶段 categories 变量尚未初始化
     foreignKey({
       columns: [table.parentId],
       foreignColumns: [table.id],
