@@ -3,12 +3,32 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAdminProductById } from "@/hooks/useAdminProducts";
+import { useAdminProductById, useDeactivateAdminProduct, useUpdateAdminProduct } from "@/hooks/useAdminProducts";
 import { Link, useParams } from "react-router";
+import { toast } from "sonner";
 
 export const AdminProductDetailPage = () => {
   const { id = "" } = useParams();
-  const { data: product, isPending, isError, error, refetch } = useAdminProductById(id);
+  const { data: product, isPending, isError, isFetching, error, refetch } = useAdminProductById(id);
+  const deactivateMutation = useDeactivateAdminProduct(id);
+  const updateMutation = useUpdateAdminProduct(id);
+
+  const handleToggle = () => {
+    if (!product || isError || isFetching || deactivateMutation.isPending || updateMutation.isPending) return;
+
+    if (product.isActive) {
+      if (!window.confirm(`Take ${product.name} offline? It will no longer appear in the store.`)) return;
+      deactivateMutation.mutate(undefined, {
+        onSuccess: () => toast.success("Product deactivated"),
+        onError: (mutationError) => toast.error(parseApiError(mutationError)),
+      });
+    } else {
+      updateMutation.mutate({ isActive: true }, {
+        onSuccess: () => toast.success("Product reactivated"),
+        onError: (mutationError) => toast.error(parseApiError(mutationError)),
+      });
+    }
+  };
 
   if (isPending) return <Skeleton className="h-64 w-full" />;
   if (isError) {
@@ -43,6 +63,16 @@ export const AdminProductDetailPage = () => {
           <p className="text-muted-foreground">Created {new Date(product.createdAt).toLocaleString()}</p>
         </CardContent>
       </Card>
+      <Button
+        type="button"
+        variant={product.isActive ? "destructive" : "outline"}
+        disabled={isFetching || deactivateMutation.isPending || updateMutation.isPending}
+        onClick={handleToggle}
+      >
+        {deactivateMutation.isPending || updateMutation.isPending
+          ? "Updating..."
+          : product.isActive ? "Deactivate product" : "Reactivate product"}
+      </Button>
     </div>
   );
 };

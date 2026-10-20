@@ -1,6 +1,6 @@
 import { apiClient } from "@/api/client";
 import type { ApiResponse } from "@/types/common";
-import type { AdminProductResponse, CreateAdminProductPayload, UpdateAdminProductPayload } from "@/types/admin-products";
+import type { AdminProductResponse, CreateAdminProductPayload, DeactivatedProductResponse, UpdateAdminProductPayload } from "@/types/admin-products";
 import type { Product, ProductListData, ProductListParams } from "@/types/products";
 
 export const getAdminProducts = async (params?: ProductListParams): Promise<ApiResponse<ProductListData>> => {
@@ -20,5 +20,10 @@ export const createAdminProduct = async (payload: CreateAdminProductPayload): Pr
 
 export const updateAdminProduct = async (id: string, payload: UpdateAdminProductPayload): Promise<ApiResponse<AdminProductResponse>> => {
   const response = await apiClient.patch<ApiResponse<AdminProductResponse>>(`/api/products/${id}`, payload);
+  return response.data;
+};
+
+export const deactivateAdminProduct = async (id: string): Promise<ApiResponse<DeactivatedProductResponse>> => {
+  const response = await apiClient.delete<ApiResponse<DeactivatedProductResponse>>(`/api/products/${id}`);
   return response.data;
 };

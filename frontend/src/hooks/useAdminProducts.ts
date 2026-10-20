@@ -1,4 +1,4 @@
-import { createAdminProduct, getAdminProductById, getAdminProducts, updateAdminProduct } from "@/api/admin-products.api";
+import { createAdminProduct, deactivateAdminProduct, getAdminProductById, getAdminProducts, updateAdminProduct } from "@/api/admin-products.api";
 import { queryKeys } from "@/lib/queryKeys";
 import { useAuthStore } from "@/stores/authStore";
 import type { UpdateAdminProductPayload } from "@/types/admin-products";
@@ -32,6 +32,22 @@ export const useUpdateAdminProduct = (productId: string) => {
         queryClient.invalidateQueries({ queryKey: queryKeys.adminProducts.lists(user?.id ?? "") }),
         queryClient.invalidateQueries({ queryKey: queryKeys.products.all }),
         queryClient.invalidateQueries({ queryKey: queryKeys.categories.all }),
+      ]);
+    },
+  });
+};
+
+export const useDeactivateAdminProduct = (productId: string) => {
+  const queryClient = useQueryClient();
+  const user = useAuthStore((state) => state.user);
+
+  return useMutation({
+    mutationFn: () => deactivateAdminProduct(productId),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.adminProducts.detail(user?.id ?? "", productId) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.adminProducts.lists(user?.id ?? "") }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.products.all }),
       ]);
     },
   });
