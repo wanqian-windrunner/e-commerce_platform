@@ -12,6 +12,8 @@ import { OrdersPage } from "@/pages/OrdersPage";
 import { AdminRoute } from "@/router/AdminRoute";
 import { AdminOrdersPage } from "@/pages/AdminOrdersPage";
 import { AdminOrderDetailPage } from "@/pages/AdminOrderDetailPage";
+import { AdminProductsPage } from "@/pages/AdminProductsPage";
+import { AdminProductDetailPage } from "@/pages/AdminProductDetailPage";
 
 const routes: RouteObject[] = [
   {
@@ -31,7 +33,9 @@ const routes: RouteObject[] = [
       ] },
       { element: <AdminRoute />, children:[
         {path: "admin/orders", element: <AdminOrdersPage /> },
-        {path: "admin/orders/:id", element: <AdminOrderDetailPage /> }
+        {path: "admin/orders/:id", element: <AdminOrderDetailPage /> },
+        {path: "admin/products", element: <AdminProductsPage /> },
+        {path: "admin/products/:id", element: <AdminProductDetailPage /> }
       ]}
     ],
   },

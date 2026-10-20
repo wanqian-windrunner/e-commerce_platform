@@ -71,6 +71,21 @@ export const StorefrontLayout = () => {
           >
             My orders
           </NavLink>
+          {user?.role === "admin" && (
+            <NavLink
+              to="/admin/products"
+              className={({ isActive }) =>
+                cn(
+                  "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )
+              }
+            >
+              Manage products
+            </NavLink>
+          )}
           <div className="ml-auto flex items-center gap-3">
             {isLoading ? (
               <span className="text-sm text-muted-foreground">
