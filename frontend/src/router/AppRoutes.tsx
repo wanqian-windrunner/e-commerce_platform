@@ -9,6 +9,8 @@ import { CartPage } from "@/pages/CartPage";
 import { CheckoutPage } from "@/pages/CheckoutPage";
 import { OrderDetailPage } from "@/pages/OrderDetailPage";
 import { OrdersPage } from "@/pages/OrdersPage";
+import { AdminRoute } from "@/router/AdminRoute";
+import { AdminOrdersPage } from "@/pages/AdminOrdersPage";
 
 const routes: RouteObject[] = [
   {
@@ -26,6 +28,9 @@ const routes: RouteObject[] = [
         {path: "orders/:id", element: <OrderDetailPage /> },
         {path: "orders", element: <OrdersPage />}
       ] },
+      { element: <AdminRoute />, children:[
+        {path: "admin/orders", element: <AdminOrdersPage /> }
+      ]}
     ],
   },
 ];

@@ -1,5 +1,6 @@
 import type { ProductListParams } from "@/types/products";
 import type { OrderListParams } from "@/types/orders";
+import type { AdminOrderListParams } from "@/types/admin-orders";
 
 export const queryKeys = {
   products: {
@@ -20,5 +21,9 @@ export const queryKeys = {
   },
   categories: {
     all: ["categories"] as const,
+  },
+  adminOrder: {
+    all: (adminId: string, params?: AdminOrderListParams) =>
+      ["adminOrder", adminId, "list", params ?? {}] as const,
   },
 };
