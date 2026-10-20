@@ -27,8 +27,7 @@ export const getAll = async (req: Request, res: Response, next: NextFunction): P
 
         res.status(200).json({
             success: true,
-            data: result.data,
-            pagination: result.pagination
+            data: result
         })
     } catch (error) {
         next(error)
