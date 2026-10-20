@@ -22,7 +22,10 @@ export const AdminProductDetailPage = () => {
 
   return (
     <div className="space-y-6">
-      <Link to="/admin/products" className="text-sm underline">Back to products</Link>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Link to="/admin/products" className="text-sm underline">Back to products</Link>
+        <Link to={`/admin/products/${product.id}/edit`} className="text-sm underline">Edit product</Link>
+      </div>
       <Card>
         <CardHeader className="space-y-2">
           <CardTitle className="text-2xl">{product.name}</CardTitle>

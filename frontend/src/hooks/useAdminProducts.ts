@@ -1,6 +1,7 @@
-import { createAdminProduct, getAdminProductById, getAdminProducts } from "@/api/admin-products.api";
+import { createAdminProduct, getAdminProductById, getAdminProducts, updateAdminProduct } from "@/api/admin-products.api";
 import { queryKeys } from "@/lib/queryKeys";
 import { useAuthStore } from "@/stores/authStore";
+import type { UpdateAdminProductPayload } from "@/types/admin-products";
 import type { ProductListParams } from "@/types/products";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -14,6 +15,23 @@ export const useCreateAdminProduct = () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: queryKeys.adminProducts.lists(user?.id ?? "") }),
         queryClient.invalidateQueries({ queryKey: queryKeys.products.all }),
+      ]);
+    },
+  });
+};
+
+export const useUpdateAdminProduct = (productId: string) => {
+  const queryClient = useQueryClient();
+  const user = useAuthStore((state) => state.user);
+
+  return useMutation({
+    mutationFn: (payload: UpdateAdminProductPayload) => updateAdminProduct(productId, payload),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.adminProducts.detail(user?.id ?? "", productId) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.adminProducts.lists(user?.id ?? "") }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.products.all }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.categories.all }),
       ]);
     },
   });

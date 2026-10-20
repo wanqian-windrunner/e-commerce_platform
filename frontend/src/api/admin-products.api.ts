@@ -1,6 +1,6 @@
 import { apiClient } from "@/api/client";
 import type { ApiResponse } from "@/types/common";
-import type { AdminProductResponse, CreateAdminProductPayload } from "@/types/admin-products";
+import type { AdminProductResponse, CreateAdminProductPayload, UpdateAdminProductPayload } from "@/types/admin-products";
 import type { Product, ProductListData, ProductListParams } from "@/types/products";
 
 export const getAdminProducts = async (params?: ProductListParams): Promise<ApiResponse<ProductListData>> => {
@@ -15,5 +15,10 @@ export const getAdminProductById = async (id: string): Promise<ApiResponse<{ pro
 
 export const createAdminProduct = async (payload: CreateAdminProductPayload): Promise<ApiResponse<AdminProductResponse>> => {
   const response = await apiClient.post<ApiResponse<AdminProductResponse>>("/api/products", payload);
+  return response.data;
+};
+
+export const updateAdminProduct = async (id: string, payload: UpdateAdminProductPayload): Promise<ApiResponse<AdminProductResponse>> => {
+  const response = await apiClient.patch<ApiResponse<AdminProductResponse>>(`/api/products/${id}`, payload);
   return response.data;
 };
