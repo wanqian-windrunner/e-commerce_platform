@@ -1,8 +1,23 @@
-import { getAdminProductById, getAdminProducts } from "@/api/admin-products.api";
+import { createAdminProduct, getAdminProductById, getAdminProducts } from "@/api/admin-products.api";
 import { queryKeys } from "@/lib/queryKeys";
 import { useAuthStore } from "@/stores/authStore";
 import type { ProductListParams } from "@/types/products";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+export const useCreateAdminProduct = () => {
+  const queryClient = useQueryClient();
+  const user = useAuthStore((state) => state.user);
+
+  return useMutation({
+    mutationFn: createAdminProduct,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.adminProducts.lists(user?.id ?? "") }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.products.all }),
+      ]);
+    },
+  });
+};
 
 export const useAdminProducts = (params?: ProductListParams) => {
   const user = useAuthStore((state) => state.user);

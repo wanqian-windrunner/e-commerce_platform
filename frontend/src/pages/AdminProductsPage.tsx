@@ -30,6 +30,7 @@ export const AdminProductsPage = () => {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold">Manage products</h1>
+        <Link to="/admin/products/new" className="text-sm underline">Add product</Link>
       </div>
 
       <form role="search" onSubmit={handleSearch} className="flex max-w-lg gap-2">
