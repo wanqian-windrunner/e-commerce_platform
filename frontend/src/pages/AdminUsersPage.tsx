@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminUsers } from "@/hooks/useAdminUsers";
 import { useState, type SubmitEvent } from "react";
+import { Link } from "react-router";
 
 export const AdminUsersPage = () => {
   const [page, setPage] = useState(1);
@@ -66,10 +67,13 @@ export const AdminUsersPage = () => {
                         </Badge>
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-1 text-sm text-muted-foreground">
-                      <p>{user.email}</p>
-                      <p>Joined {new Date(user.createdAt).toLocaleString()}</p>
-                      <p className="break-all">ID: {user.id}</p>
+                    <CardContent className="flex flex-wrap items-center justify-between gap-3 text-sm">
+                      <div className="space-y-1 text-muted-foreground">
+                        <p>{user.email}</p>
+                        <p>Joined {new Date(user.createdAt).toLocaleString()}</p>
+                        <p className="break-all">ID: {user.id}</p>
+                      </div>
+                      <Link to={`/admin/users/${user.id}`} className="underline">View details</Link>
                     </CardContent>
                   </Card>
                 </li>

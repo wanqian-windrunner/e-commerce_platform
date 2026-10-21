@@ -39,6 +39,8 @@ export const queryKeys = {
     lists: (adminId: string) => ["adminUsers", adminId, "list"] as const,
     list: (adminId: string, params: AdminUserListParams) =>
       ["adminUsers", adminId, "list", params] as const,
+    detail: (adminId: string, userId: string) =>
+      ["adminUsers", adminId, "detail", userId] as const,
   },
   adminOrder: {
     lists: (adminId: string) => ["adminOrder", adminId, "list"] as const,

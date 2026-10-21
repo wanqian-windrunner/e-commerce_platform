@@ -21,6 +21,7 @@ import { AdminCategoryDetailPage } from "@/pages/AdminCategoryDetailPage";
 import { AdminCategoryCreatePage } from "@/pages/AdminCategoryCreatePage";
 import { AdminCategoryEditPage } from "@/pages/AdminCategoryEditPage";
 import { AdminUsersPage } from "@/pages/AdminUsersPage";
+import { AdminUserDetailPage } from "@/pages/AdminUserDetailPage";
 
 const routes: RouteObject[] = [
   {
@@ -49,7 +50,8 @@ const routes: RouteObject[] = [
         {path: "admin/categories/new", element: <AdminCategoryCreatePage /> },
         {path: "admin/categories/:id", element: <AdminCategoryDetailPage /> },
         {path: "admin/categories/:id/edit", element: <AdminCategoryEditPage /> },
-        {path: "admin/users", element: <AdminUsersPage /> }
+        {path: "admin/users", element: <AdminUsersPage /> },
+        {path: "admin/users/:id", element: <AdminUserDetailPage /> }
       ]}
     ],
   },
