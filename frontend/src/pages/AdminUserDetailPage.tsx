@@ -26,6 +26,17 @@ export const AdminUserDetailPage = () => {
     });
   };
 
+  const handleActivation = () => {
+    if (!user || isError || isFetching || mutation.isPending || user.id === adminId) return;
+    if (user.isActive &&
+        !window.confirm(`Deactivate ${user.name}? They will be unable to sign in or refresh their session.`)) return;
+
+    mutation.mutate({ isActive: !user.isActive }, {
+      onSuccess: () => toast.success(user.isActive ? "User deactivated" : "User reactivated"),
+      onError: (mutationError) => toast.error(parseApiError(mutationError)),
+    });
+  };
+
   if (!id) return <p role="alert" className="text-destructive">User ID is missing.</p>;
   if (isPending) return <Skeleton className="h-64 w-full" />;
   if (isError) {
@@ -76,6 +87,23 @@ export const AdminUserDetailPage = () => {
                 </Button>
               ))}
             </div>
+          )}
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader><CardTitle>Account status</CardTitle></CardHeader>
+        <CardContent>
+          {user.id === adminId ? (
+            <p className="text-sm text-muted-foreground">You cannot deactivate your own admin account.</p>
+          ) : (
+            <Button
+              type="button"
+              variant={user.isActive ? "destructive" : "outline"}
+              disabled={isFetching || mutation.isPending}
+              onClick={handleActivation}
+            >
+              {mutation.isPending ? "Updating..." : user.isActive ? "Deactivate user" : "Reactivate user"}
+            </Button>
           )}
         </CardContent>
       </Card>
