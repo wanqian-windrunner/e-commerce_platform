@@ -35,7 +35,7 @@ export const AdminProductCreatePage = () => {
           <Button type="button" variant="outline" onClick={() => void categoriesQuery.refetch()}>Retry</Button>
         </div>
       ) : categoriesQuery.data.length === 0 ? (
-        <p role="alert">Create a category before adding a product.</p>
+        <p role="alert">Create a <Link to="/admin/categories/new" className="underline">category</Link> before adding a product.</p>
       ) : (
         <>
           {mutation.isError && <p role="alert" className="text-sm text-destructive">{parseApiError(mutation.error)}</p>}

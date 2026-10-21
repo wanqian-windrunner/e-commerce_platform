@@ -1,7 +1,22 @@
-import { getAdminCategories, getAdminCategoryById } from "@/api/admin-categories.api";
+import { createAdminCategory, getAdminCategories, getAdminCategoryById } from "@/api/admin-categories.api";
 import { queryKeys } from "@/lib/queryKeys";
 import { useAuthStore } from "@/stores/authStore";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+export const useCreateAdminCategory = () => {
+  const queryClient = useQueryClient();
+  const user = useAuthStore((state) => state.user);
+
+  return useMutation({
+    mutationFn: createAdminCategory,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.adminCategories.list(user?.id ?? "") }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.categories.all }),
+      ]);
+    },
+  });
+};
 
 export const useAdminCategories = () => {
   const user = useAuthStore((state) => state.user);

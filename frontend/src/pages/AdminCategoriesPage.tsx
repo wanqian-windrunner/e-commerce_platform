@@ -13,6 +13,7 @@ export const AdminCategoriesPage = () => {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold">Manage categories</h1>
+        <Link to="/admin/categories/new" className="text-sm underline">Add category</Link>
       </div>
       {isPending ? (
         <div className="space-y-4">
