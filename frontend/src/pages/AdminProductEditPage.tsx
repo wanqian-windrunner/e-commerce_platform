@@ -3,7 +3,7 @@ import { AdminProductForm } from "@/components/products/AdminProductForm";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminProductById, useUpdateAdminProduct } from "@/hooks/useAdminProducts";
-import { useCategories } from "@/hooks/useCategories";
+import { useAdminCategories } from "@/hooks/useAdminCategories";
 import { toProductPayload, type ProductFormValues } from "@/lib/validations/product";
 import { Link, useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
@@ -12,7 +12,7 @@ export const AdminProductEditPage = () => {
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const productQuery = useAdminProductById(id);
-  const categoriesQuery = useCategories();
+  const categoriesQuery = useAdminCategories();
   const mutation = useUpdateAdminProduct(id);
 
   const handleSubmit = (values: ProductFormValues) => {
