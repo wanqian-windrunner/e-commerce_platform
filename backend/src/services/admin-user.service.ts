@@ -1,4 +1,4 @@
-import { count, desc, eq, ilike, or } from "drizzle-orm";
+import { and, count, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { users } from "../database/schema/users.js";
 import { db } from "../database/db.js";
 import { AppError } from "../utils/app-error.js";
@@ -86,32 +86,76 @@ export const updateAdminUser = async (
   },
   currentAdminId?: string
 ) => {
-  const existingUser = await getAdminUserById(userId)
+  return db.transaction(async (tx) => {
+    // Serialize admin updates so concurrent demotions cannot remove every active admin.
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(82473928)`)
 
-  if (currentAdminId && userId === currentAdminId && input.isActive === false && existingUser.isActive === true ) {
-    throw AppError.badRequest("You cannot deactivate your own admin account")
-  }
+    if (!currentAdminId) {
+      throw AppError.unauthorized()
+    }
 
-  const [updatedUser] = await db
-    .update(users)
-    .set({
-      ...input,
-      updatedAt: new Date()
-    })
-    .where(eq(users.id, userId))
-    .returning({
-      id: users.id,
-      name: users.name,
-      email: users.email,
-      role: users.role,
-      isActive: users.isActive,
-      createdAt: users.createdAt,
-      updatedAt: users.updatedAt
-    })
+    const [currentAdmin] = await tx
+      .select({ role: users.role, isActive: users.isActive })
+      .from(users)
+      .where(eq(users.id, currentAdminId))
+      .limit(1)
 
-  if (!updatedUser) {
-    throw AppError.internal("Failed to update user")
-  }
+    if (currentAdmin?.role !== "admin" || !currentAdmin.isActive) {
+      throw AppError.forbidden("Admin access is no longer available")
+    }
 
-  return updatedUser
+    const [existingUser] = await tx
+      .select({ id: users.id, role: users.role, isActive: users.isActive })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1)
+
+    if (!existingUser) {
+      throw AppError.notFound("User not found")
+    }
+
+    if (userId === currentAdminId) {
+      if (input.isActive === false && existingUser.isActive) {
+        throw AppError.badRequest("You cannot deactivate your own admin account")
+      }
+      if (input.role === "customer" && existingUser.role === "admin") {
+        throw AppError.badRequest("You cannot remove your own admin role")
+      }
+    }
+
+    if (existingUser.role === "admin" && existingUser.isActive &&
+        (input.role === "customer" || input.isActive === false)) {
+      const [{ total }] = await tx
+        .select({ total: count() })
+        .from(users)
+        .where(and(eq(users.role, "admin"), eq(users.isActive, true)))
+
+      if (total <= 1) {
+        throw AppError.badRequest("At least one active admin must remain")
+      }
+    }
+
+    const [updatedUser] = await tx
+      .update(users)
+      .set({
+        ...input,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId))
+      .returning({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        isActive: users.isActive,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt
+      })
+
+    if (!updatedUser) {
+      throw AppError.internal("Failed to update user")
+    }
+
+    return updatedUser
+  })
 };
