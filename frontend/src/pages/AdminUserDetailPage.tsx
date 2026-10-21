@@ -3,12 +3,28 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAdminUserById } from "@/hooks/useAdminUsers";
+import { useAdminUserById, useUpdateAdminUser } from "@/hooks/useAdminUsers";
+import { useAuthStore } from "@/stores/authStore";
+import type { UserRole } from "@/types/auth";
 import { Link, useParams } from "react-router";
+import { toast } from "sonner";
 
 export const AdminUserDetailPage = () => {
   const { id = "" } = useParams();
-  const { data: user, isPending, isError, error, refetch } = useAdminUserById(id);
+  const { data: user, isPending, isError, isFetching, error, refetch } = useAdminUserById(id);
+  const adminId = useAuthStore((state) => state.user?.id);
+  const mutation = useUpdateAdminUser(id);
+
+  const handleRoleChange = (role: UserRole) => {
+    if (!user || isError || isFetching || mutation.isPending || user.id === adminId || user.role === role) return;
+    if (role === "customer" &&
+        !window.confirm(`Remove admin access from ${user.name}? This takes effect on their next admin request.`)) return;
+
+    mutation.mutate({ role }, {
+      onSuccess: () => toast.success("User role updated"),
+      onError: (mutationError) => toast.error(parseApiError(mutationError)),
+    });
+  };
 
   if (!id) return <p role="alert" className="text-destructive">User ID is missing.</p>;
   if (isPending) return <Skeleton className="h-64 w-full" />;
@@ -39,6 +55,28 @@ export const AdminUserDetailPage = () => {
           <p className="break-all">ID: {user.id}</p>
           <p className="text-muted-foreground">Joined {new Date(user.createdAt).toLocaleString()}</p>
           <p className="text-muted-foreground">Updated {new Date(user.updatedAt).toLocaleString()}</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader><CardTitle>Role</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          {user.id === adminId ? (
+            <p className="text-sm text-muted-foreground">You cannot change your own admin role.</p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {(["customer", "admin"] as const).map((role) => (
+                <Button
+                  key={role}
+                  type="button"
+                  variant={user.role === role ? "secondary" : "outline"}
+                  disabled={user.role === role || isFetching || mutation.isPending}
+                  onClick={() => handleRoleChange(role)}
+                >
+                  {mutation.isPending ? "Updating..." : `Set ${role}`}
+                </Button>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

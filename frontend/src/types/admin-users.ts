@@ -11,6 +11,11 @@ export interface AdminUser {
   updatedAt: string;
 }
 
+export interface UpdateAdminUserPayload {
+  role?: UserRole;
+  isActive?: boolean;
+}
+
 export interface AdminUserListParams {
   page?: number;
   limit?: number;
