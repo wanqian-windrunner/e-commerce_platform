@@ -24,7 +24,10 @@ export const AdminCategoryDetailPage = () => {
 
   return (
     <div className="space-y-6">
-      <Link to="/admin/categories" className="text-sm underline">Back to categories</Link>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Link to="/admin/categories" className="text-sm underline">Back to categories</Link>
+        <Link to={`/admin/categories/${id}/edit`} className="text-sm underline">Edit category</Link>
+      </div>
       <Card>
         <CardHeader className="space-y-2">
           <CardTitle className="text-2xl">{category.name}</CardTitle>

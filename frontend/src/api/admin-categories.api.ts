@@ -1,5 +1,5 @@
 import { apiClient } from "@/api/client";
-import type { CreateAdminCategoryPayload } from "@/types/admin-categories";
+import type { CreateAdminCategoryPayload, UpdateAdminCategoryPayload } from "@/types/admin-categories";
 import type { Category } from "@/types/categories";
 import type { ApiResponse } from "@/types/common";
 
@@ -15,5 +15,10 @@ export const getAdminCategoryById = async (id: string): Promise<ApiResponse<Cate
 
 export const createAdminCategory = async (payload: CreateAdminCategoryPayload): Promise<ApiResponse<Category>> => {
   const response = await apiClient.post<ApiResponse<Category>>("/api/categories", payload);
+  return response.data;
+};
+
+export const updateAdminCategory = async (id: string, payload: UpdateAdminCategoryPayload): Promise<ApiResponse<Category>> => {
+  const response = await apiClient.patch<ApiResponse<Category>>(`/api/categories/${id}`, payload);
   return response.data;
 };

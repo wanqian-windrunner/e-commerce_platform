@@ -8,15 +8,17 @@ import { useForm } from "react-hook-form";
 
 interface AdminCategoryFormProps {
   categories: Category[];
+  initialValues?: CategoryFormValues;
+  categoryId?: string;
   submitting: boolean;
   submitLabel: string;
   onSubmit: (values: CategoryFormValues) => void;
 }
 
-export const AdminCategoryForm = ({ categories, submitting, submitLabel, onSubmit }: AdminCategoryFormProps) => {
+export const AdminCategoryForm = ({ categories, initialValues, categoryId, submitting, submitLabel, onSubmit }: AdminCategoryFormProps) => {
   const { register, handleSubmit, formState: { errors } } = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
-    defaultValues: { name: "", slug: "", description: "", parentId: "" },
+    defaultValues: initialValues ?? { name: "", slug: "", description: "", parentId: "" },
   });
 
   return (
@@ -50,7 +52,7 @@ export const AdminCategoryForm = ({ categories, submitting, submitLabel, onSubmi
             {...register("parentId")}
           >
             <option value="">None</option>
-            {categories.map((category) => (
+            {categories.filter((category) => category.id !== categoryId).map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}{category.isActive ? "" : " (inactive)"}
               </option>

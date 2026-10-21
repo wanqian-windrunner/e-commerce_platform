@@ -1,4 +1,4 @@
-import type { CreateAdminCategoryPayload } from "@/types/admin-categories";
+import type { CreateAdminCategoryPayload, UpdateAdminCategoryPayload } from "@/types/admin-categories";
 import { z } from "zod";
 
 // Mirrors backend/src/validations/category.validation.ts for category creation.
@@ -16,5 +16,12 @@ export const toCreateCategoryPayload = (values: CategoryFormValues): CreateAdmin
   name: values.name,
   slug: values.slug,
   description: values.description || undefined,
+  parentId: values.parentId || null,
+});
+
+export const toUpdateCategoryPayload = (values: CategoryFormValues): UpdateAdminCategoryPayload => ({
+  name: values.name,
+  slug: values.slug,
+  description: values.description || null,
   parentId: values.parentId || null,
 });
