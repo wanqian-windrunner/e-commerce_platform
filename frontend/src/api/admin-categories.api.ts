@@ -22,3 +22,8 @@ export const updateAdminCategory = async (id: string, payload: UpdateAdminCatego
   const response = await apiClient.patch<ApiResponse<Category>>(`/api/categories/${id}`, payload);
   return response.data;
 };
+
+export const deactivateAdminCategory = async (id: string): Promise<ApiResponse<Category>> => {
+  const response = await apiClient.delete<ApiResponse<Category>>(`/api/categories/${id}`);
+  return response.data;
+};

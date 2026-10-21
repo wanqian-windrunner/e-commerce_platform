@@ -3,13 +3,33 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAdminCategories, useAdminCategoryById } from "@/hooks/useAdminCategories";
+import { useAdminCategories, useAdminCategoryById, useDeactivateAdminCategory, useUpdateAdminCategory } from "@/hooks/useAdminCategories";
 import { Link, useParams } from "react-router";
+import { toast } from "sonner";
 
 export const AdminCategoryDetailPage = () => {
   const { id = "" } = useParams();
-  const { data: category, isPending, isError, error, refetch } = useAdminCategoryById(id);
+  const { data: category, isPending, isError, isFetching, error, refetch } = useAdminCategoryById(id);
   const { data: categories } = useAdminCategories();
+  const deactivateMutation = useDeactivateAdminCategory(id);
+  const updateMutation = useUpdateAdminCategory(id);
+
+  const handleToggle = () => {
+    if (!category || isError || isFetching || deactivateMutation.isPending || updateMutation.isPending) return;
+
+    if (category.isActive) {
+      if (!window.confirm(`Deactivate ${category.name}? This does not deactivate its subcategories or products.`)) return;
+      deactivateMutation.mutate(undefined, {
+        onSuccess: () => toast.success("Category deactivated"),
+        onError: (mutationError) => toast.error(parseApiError(mutationError)),
+      });
+    } else {
+      updateMutation.mutate({ isActive: true }, {
+        onSuccess: () => toast.success("Category reactivated"),
+        onError: (mutationError) => toast.error(parseApiError(mutationError)),
+      });
+    }
+  };
 
   if (!id) return <p role="alert" className="text-destructive">Category ID is missing.</p>;
   if (isPending) return <Skeleton className="h-64 w-full" />;
@@ -42,6 +62,16 @@ export const AdminCategoryDetailPage = () => {
           <p className="text-muted-foreground">Created {new Date(category.createdAt).toLocaleString()}</p>
         </CardContent>
       </Card>
+      <Button
+        type="button"
+        variant={category.isActive ? "destructive" : "outline"}
+        disabled={isFetching || deactivateMutation.isPending || updateMutation.isPending}
+        onClick={handleToggle}
+      >
+        {deactivateMutation.isPending || updateMutation.isPending
+          ? "Updating..."
+          : category.isActive ? "Deactivate category" : "Reactivate category"}
+      </Button>
     </div>
   );
 };
