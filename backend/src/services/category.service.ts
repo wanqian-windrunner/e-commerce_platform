@@ -114,7 +114,17 @@ export const updateCategory = async (categoryId: string,input: UpdateCategoryInp
     }
 
     if (input.parentId && input.parentId !== existingCategory.parentId) {
-        await getCategoryById(input.parentId);
+        const visited = new Set<string>()
+        let parentId: string | null = input.parentId
+
+        while (parentId) {
+            if (parentId === categoryId || visited.has(parentId)) {
+                throw AppError.badRequest("A category cannot be a descendant of itself")
+            }
+            visited.add(parentId)
+            const parent = await getCategoryById(parentId)
+            parentId = parent.parentId
+        }
     }
 
     if (input.name || input.slug) {
