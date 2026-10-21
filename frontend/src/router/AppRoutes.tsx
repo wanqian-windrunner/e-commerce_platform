@@ -16,6 +16,8 @@ import { AdminProductsPage } from "@/pages/AdminProductsPage";
 import { AdminProductDetailPage } from "@/pages/AdminProductDetailPage";
 import { AdminProductCreatePage } from "@/pages/AdminProductCreatePage";
 import { AdminProductEditPage } from "@/pages/AdminProductEditPage";
+import { AdminCategoriesPage } from "@/pages/AdminCategoriesPage";
+import { AdminCategoryDetailPage } from "@/pages/AdminCategoryDetailPage";
 
 const routes: RouteObject[] = [
   {
@@ -39,7 +41,9 @@ const routes: RouteObject[] = [
         {path: "admin/products", element: <AdminProductsPage /> },
         {path: "admin/products/new", element: <AdminProductCreatePage /> },
         {path: "admin/products/:id", element: <AdminProductDetailPage /> },
-        {path: "admin/products/:id/edit", element: <AdminProductEditPage /> }
+        {path: "admin/products/:id/edit", element: <AdminProductEditPage /> },
+        {path: "admin/categories", element: <AdminCategoriesPage /> },
+        {path: "admin/categories/:id", element: <AdminCategoryDetailPage /> }
       ]}
     ],
   },

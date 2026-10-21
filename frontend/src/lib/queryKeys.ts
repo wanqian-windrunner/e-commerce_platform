@@ -22,6 +22,11 @@ export const queryKeys = {
   categories: {
     all: ["categories"] as const,
   },
+  adminCategories: {
+    list: (adminId: string) => ["adminCategories", adminId, "list"] as const,
+    detail: (adminId: string, categoryId: string) =>
+      ["adminCategories", adminId, "detail", categoryId] as const,
+  },
   adminProducts: {
     lists: (adminId: string) => ["adminProducts", adminId, "list"] as const,
     list: (adminId: string, params?: ProductListParams) =>
