@@ -1,6 +1,7 @@
 import type { ProductListParams } from "@/types/products";
 import type { OrderListParams } from "@/types/orders";
 import type { AdminOrderListParams } from "@/types/admin-orders";
+import type { AdminUserListParams } from "@/types/admin-users";
 
 export const queryKeys = {
   products: {
@@ -33,6 +34,11 @@ export const queryKeys = {
       ["adminProducts", adminId, "list", params ?? {}] as const,
     detail: (adminId: string, productId: string) =>
       ["adminProducts", adminId, "detail", productId] as const,
+  },
+  adminUsers: {
+    lists: (adminId: string) => ["adminUsers", adminId, "list"] as const,
+    list: (adminId: string, params: AdminUserListParams) =>
+      ["adminUsers", adminId, "list", params] as const,
   },
   adminOrder: {
     lists: (adminId: string) => ["adminOrder", adminId, "list"] as const,
