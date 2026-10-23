@@ -95,13 +95,7 @@ const productSelectFields = {
 }
 
 export const createProduct = async (input: CreateProductInput) => {
-    if (!input.categoryId) {
-        throw AppError.badRequest("Category ID is required", "CATEGORY_ID_REQUIRED")
-    }
-
-    if (input.categoryId !== undefined && input.categoryId !== null) {
-        await ensureCategoryExists(input.categoryId)
-    }
+    await ensureCategoryExists(input.categoryId)
 
     await ensureUniqueSku(input.sku)
     const slug = await generateUniqueSlug(input.name)
@@ -140,6 +134,21 @@ export const getProductById = async (productId: string) => {
         .from(products)
         .leftJoin(categories, eq(products.categoryId, categories.id))
         .where(eq(products.id, productId))
+        .limit(1)
+
+    if (!product) {
+        throw AppError.notFound("Product not found", "PRODUCT_NOT_FOUND")
+    }
+
+    return product
+}
+
+export const getActiveProductById = async (productId: string) => {
+    const [product] = await db
+        .select(productSelectFields)
+        .from(products)
+        .leftJoin(categories, eq(products.categoryId, categories.id))
+        .where(and(eq(products.id, productId), eq(products.isActive, true)))
         .limit(1)
 
     if (!product) {
@@ -247,7 +256,7 @@ export const updateProduct = async (productId: string, input: UpdateProductInput
     }
 
     const updateData: Record<string, unknown> = {
-        updateAt: new Date(),
+        updatedAt: new Date(),
         ...(input.name !== undefined && { name: input.name }),
         ...(slug !== undefined && { slug }),
         ...(input.sku !== undefined && { sku: input.sku }),

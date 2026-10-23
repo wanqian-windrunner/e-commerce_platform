@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express"
 import {
     createCategory,
     deleteCategory,
+    getActiveCategoryById,
     getAllCategories,
     getCategoryById,
     getCategoryBySlug,
@@ -28,7 +29,7 @@ export const handleGetAllCategories = async (req: Request, res: Response, next: 
     }
 
     try {
-        const categories = await getAllCategories(validationResult.data.includeInactive)
+        const categories = await getAllCategories(false)
 
         res.status(200).json({
             success: true,
@@ -40,6 +41,43 @@ export const handleGetAllCategories = async (req: Request, res: Response, next: 
 }
 
 export const handleGetCategoryById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const validationResult = categoryIdParamSchema.safeParse(req.params)
+
+    if (!validationResult.success) {
+        res.status(400).json({
+            success: false,
+            message: "Invalid category ID",
+            errors: validationResult.error.issues
+        })
+        return
+    }
+
+    try {
+        const category = await getActiveCategoryById(validationResult.data.id)
+
+        res.status(200).json({
+            success: true,
+            data: category
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const handleAdminGetAllCategories = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const categories = await getAllCategories(true)
+
+        res.status(200).json({
+            success: true,
+            data: categories
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const handleAdminGetCategoryById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const validationResult = categoryIdParamSchema.safeParse(req.params)
 
     if (!validationResult.success) {

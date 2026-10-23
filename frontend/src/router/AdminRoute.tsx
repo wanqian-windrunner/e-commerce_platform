@@ -17,7 +17,7 @@ export const AdminRoute = () => {
   if (!user) {
     return (
       <Navigate
-        to="login"
+        to="/login"
         replace
         state={{
           from: `${location.pathname}${location.search}${location.hash}`,

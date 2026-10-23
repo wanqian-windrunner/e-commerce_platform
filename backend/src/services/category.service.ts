@@ -32,6 +32,20 @@ export const getCategoryById = async (categoryId: string) => {
     return category
 }
 
+export const getActiveCategoryById = async (categoryId: string) => {
+    const [category] = await db
+        .select()
+        .from(categories)
+        .where(and(eq(categories.id, categoryId), eq(categories.isActive, true)))
+        .limit(1)
+
+    if (!category) {
+        throw AppError.notFound("Category not found")
+    }
+
+    return category
+}
+
 export const getCategoryBySlug = async (slug: string) => {
     const [category] = await db
         .select()
@@ -100,7 +114,17 @@ export const updateCategory = async (categoryId: string,input: UpdateCategoryInp
     }
 
     if (input.parentId && input.parentId !== existingCategory.parentId) {
-        await getCategoryById(input.parentId);
+        const visited = new Set<string>()
+        let parentId: string | null = input.parentId
+
+        while (parentId) {
+            if (parentId === categoryId || visited.has(parentId)) {
+                throw AppError.badRequest("A category cannot be a descendant of itself")
+            }
+            visited.add(parentId)
+            const parent = await getCategoryById(parentId)
+            parentId = parent.parentId
+        }
     }
 
     if (input.name || input.slug) {
